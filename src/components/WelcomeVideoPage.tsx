@@ -375,28 +375,28 @@ export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProp
             </div>
 
             {qrVisible && (
-              <div className="mt-4 p-3 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4">
-                <div className="shrink-0 w-[120px] h-[120px] bg-white/5 rounded-md flex items-center justify-center">
+              <div className="mt-4 p-3 bg-white/5 rounded-2xl border border-white/10 flex items-start gap-4">
+                <div className="shrink-0 w-[220px] h-[220px] bg-white/5 rounded-md flex items-center justify-center">
                   {qrGenerating ? (
-                    <div className="text-xs text-zinc-300">Generando...</div>
+                    <div className="text-sm text-zinc-300">Generando...</div>
                   ) : qrDataUrl ? (
-                    <img src={qrDataUrl} alt="QR Sebas Frost" className="w-[110px] h-[110px] object-contain" />
+                    <img src={qrDataUrl} alt="QR Sebas Frost" className="w-[210px] h-[210px] object-contain" />
                   ) : (
-                    <div className="text-xs text-zinc-400">QR no generado</div>
+                    <div className="text-sm text-zinc-400">QR no generado</div>
                   )}
                 </div>
 
                 <div className="flex-1 text-sm text-zinc-300">
                   <div className="font-bold text-white">Ir a Sebas Frost</div>
                   <div className="text-xs break-all mt-1">{QR_TARGET}</div>
-                  <div className="mt-3">
+                  <div className="mt-3 flex flex-wrap gap-3">
                     <button
                       onClick={async () => {
                         if (qrDataUrl) return;
                         setQrGenerating(true);
                         try {
                           const QR = await import('qrcode');
-                          const dataUrl = await QR.toDataURL(QR_TARGET, { width: 400, margin: 1 });
+                          const dataUrl = await QR.toDataURL(QR_TARGET, { width: 800, margin: 1 });
                           setQrDataUrl(dataUrl);
                         } catch (e) {
                           console.error('QR generation error', e);
@@ -414,10 +414,33 @@ export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProp
                           navigator.clipboard?.writeText(QR_TARGET);
                         }
                       }}
-                      className="ml-3 px-3 py-2 bg-white/6 text-white rounded-lg border border-white/10 font-medium"
+                      className="px-3 py-2 bg-white/6 text-white rounded-lg border border-white/10 font-medium"
                     >
                       Copiar enlace
                     </button>
+                    <button
+                      onClick={() => {
+                        if (qrDataUrl) {
+                          const a = document.createElement('a');
+                          a.href = qrDataUrl;
+                          a.download = 'sebas-frost-qr.png';
+                          document.body.appendChild(a);
+                          a.click();
+                          a.remove();
+                        }
+                      }}
+                      className="px-3 py-2 bg-white/6 text-white rounded-lg border border-white/10 font-medium"
+                      disabled={!qrDataUrl}
+                    >
+                      Descargar QR
+                    </button>
+                  </div>
+
+                  {/* Attribution block: CC0 1.0 */}
+                  <div className="mt-4 text-xs text-zinc-400 flex items-center gap-2 flex-wrap">
+                    <span dangerouslySetInnerHTML={{ __html: `<a href="https://sebas-frost.vercel.app/">Sebas Frost</a> by <a href="https://github.com/Hoyuse">Sebastian Morelo</a> is marked <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>` }} />
+                    <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="cc" style={{ maxWidth: '1em', maxHeight: '1em', marginLeft: '.2em' }} />
+                    <img src="https://mirrors.creativecommons.org/presskit/icons/zero.svg" alt="zero" style={{ maxWidth: '1em', maxHeight: '1em', marginLeft: '.2em' }} />
                   </div>
                 </div>
               </div>
