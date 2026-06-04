@@ -206,7 +206,7 @@ export default function App() {
     <div className="min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary-container selection:text-primary">
       
       {/* 1. Header / TopNavBar */}
-      <header className="fixed top-0 w-full z-50 bg-white/60 backdrop-blur-xl border-b border-white/20 shadow-[0_10px_30px_-10px_rgba(0,105,112,0.04)]">
+      <header className={`fixed top-0 w-full z-50 border-b border-white/20 shadow-[0_10px_30px_-10px_rgba(0,105,112,0.04)] ${isMobileMenuOpen ? 'bg-white' : 'bg-white/60 backdrop-blur-xl'}`}>
         <nav className="flex justify-between items-center px-6 md:px-16 py-4 max-w-7xl mx-auto">
           {/* Logo */}
           <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => { setCurrentView('store'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
