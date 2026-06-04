@@ -95,6 +95,9 @@ const SCENES: SceneFrame[] = [
 export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProps) {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [qrVisible, setQrVisible] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [qrGenerating, setQrGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const timerRef = useRef<any>(null);
 
@@ -143,6 +146,7 @@ export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProp
 
   const currentScene = SCENES[currentFrame];
   const IconComponent = currentScene.icon;
+  const QR_TARGET = 'https://sebas-frost.vercel.app/';
 
   // Global aggregate timing calculations
   const totalDurationSec = (SCENES.length * PLAY_SPEED) / 1000; // 12 seconds total
@@ -339,6 +343,85 @@ export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProp
             >
               ¡Refrescar Mi Mundo Ahora!
             </button>
+            {/* QR Code area - link to welcome site and download */}
+            <div className="mt-4 flex items-center gap-3">
+              <button
+                onClick={async () => {
+                  setQrVisible((v) => !v);
+                }}
+                className="px-3 py-2 bg-white/6 text-white rounded-xl border border-white/10 text-sm font-semibold"
+                title="Mostrar u ocultar código QR"
+              >
+                {qrVisible ? 'Ocultar QR' : 'Mostrar QR'}
+              </button>
+
+              <button
+                onClick={() => {
+                  if (qrDataUrl) {
+                    const a = document.createElement('a');
+                    a.href = qrDataUrl;
+                    a.download = 'sebas-frost-qr.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                  }
+                }}
+                className="px-3 py-2 bg-white/6 text-white rounded-xl border border-white/10 text-sm font-semibold"
+                disabled={!qrDataUrl}
+                title={qrDataUrl ? 'Descargar QR' : 'Genera el QR primero'}
+              >
+                Descargar QR
+              </button>
+            </div>
+
+            {qrVisible && (
+              <div className="mt-4 p-3 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4">
+                <div className="shrink-0 w-[120px] h-[120px] bg-white/5 rounded-md flex items-center justify-center">
+                  {qrGenerating ? (
+                    <div className="text-xs text-zinc-300">Generando...</div>
+                  ) : qrDataUrl ? (
+                    <img src={qrDataUrl} alt="QR Sebas Frost" className="w-[110px] h-[110px] object-contain" />
+                  ) : (
+                    <div className="text-xs text-zinc-400">QR no generado</div>
+                  )}
+                </div>
+
+                <div className="flex-1 text-sm text-zinc-300">
+                  <div className="font-bold text-white">Ir a Sebas Frost</div>
+                  <div className="text-xs break-all mt-1">{QR_TARGET}</div>
+                  <div className="mt-3">
+                    <button
+                      onClick={async () => {
+                        if (qrDataUrl) return;
+                        setQrGenerating(true);
+                        try {
+                          const QR = await import('qrcode');
+                          const dataUrl = await QR.toDataURL(QR_TARGET, { width: 400, margin: 1 });
+                          setQrDataUrl(dataUrl);
+                        } catch (e) {
+                          console.error('QR generation error', e);
+                        } finally {
+                          setQrGenerating(false);
+                        }
+                      }}
+                      className="px-3 py-2 bg-primary text-white rounded-lg font-semibold"
+                    >
+                      Generar QR
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (qrDataUrl) {
+                          navigator.clipboard?.writeText(QR_TARGET);
+                        }
+                      }}
+                      className="ml-3 px-3 py-2 bg-white/6 text-white rounded-lg border border-white/10 font-medium"
+                    >
+                      Copiar enlace
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
         </div>
