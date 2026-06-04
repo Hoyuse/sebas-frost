@@ -16,6 +16,7 @@ import {
   Smile, 
   BookOpen,
   LogOut,
+  Menu,
   Play
 } from 'lucide-react';
 
@@ -44,6 +45,7 @@ export default function App() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'store' | 'video' | 'mision-vision'>('store');
   const [isOpenNow, setIsOpenNow] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // --- AUTHENTICATION STATE ---
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -246,6 +248,14 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="md:hidden p-2 bg-zinc-100 hover:bg-zinc-200 rounded-xl transition-colors text-on-surface"
+              aria-label="Abrir menú"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
             {/* User Profile Auth Section */}
             {!loadingAuth && (
               <div>
@@ -305,6 +315,72 @@ export default function App() {
             </motion.button>
           </div>
         </nav>
+
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60]"
+            >
+              <div
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              />
+
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'tween', duration: 0.25 }}
+                className="absolute right-0 top-0 h-full w-[84vw] max-w-xs bg-white shadow-2xl p-5 flex flex-col gap-4 z-[70]"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-extrabold">Navegación</span>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="p-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 transition-colors"
+                    aria-label="Cerrar menú"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => { setCurrentView('store'); setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="text-left w-full px-4 py-3 rounded-2xl font-semibold text-on-surface hover:bg-zinc-100 transition-colors"
+                >
+                  Menú Principal
+                </button>
+                <button
+                  onClick={() => { setCurrentView('video'); setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="text-left w-full px-4 py-3 rounded-2xl font-semibold text-on-surface hover:bg-zinc-100 transition-colors"
+                >
+                  Vídeo de Bienvenida
+                </button>
+                <button
+                  onClick={() => { setCurrentView('store'); setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="text-left w-full px-4 py-3 rounded-2xl font-semibold text-on-surface hover:bg-zinc-100 transition-colors"
+                >
+                  Sabores
+                </button>
+                <button
+                  onClick={() => { setCurrentView('store'); setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="text-left w-full px-4 py-3 rounded-2xl font-semibold text-on-surface hover:bg-zinc-100 transition-colors"
+                >
+                  Horarios
+                </button>
+                <button
+                  onClick={() => { setCurrentView('mision-vision'); setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="text-left w-full px-4 py-3 rounded-2xl font-semibold text-on-surface hover:bg-zinc-100 transition-colors"
+                >
+                  Misión y Visión
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <main className="pt-20">
