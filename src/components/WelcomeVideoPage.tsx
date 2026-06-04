@@ -95,7 +95,6 @@ const SCENES: SceneFrame[] = [
 export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProps) {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [qrVisible, setQrVisible] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [qrGenerating, setQrGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -147,6 +146,26 @@ export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProp
   const currentScene = SCENES[currentFrame];
   const IconComponent = currentScene.icon;
   const QR_TARGET = 'https://sebas-frost.vercel.app/';
+
+  // Auto-generate QR once on mount so it's always visible
+  useEffect(() => {
+    let mounted = true;
+    const gen = async () => {
+      if (qrDataUrl) return;
+      setQrGenerating(true);
+      try {
+        const QR = await import('qrcode');
+        const dataUrl = await QR.toDataURL(QR_TARGET, { width: 800, margin: 1 });
+        if (mounted) setQrDataUrl(dataUrl);
+      } catch (e) {
+        console.error('QR generation error', e);
+      } finally {
+        if (mounted) setQrGenerating(false);
+      }
+    };
+    gen();
+    return () => { mounted = false; };
+  }, []);
 
   // Global aggregate timing calculations
   const totalDurationSec = (SCENES.length * PLAY_SPEED) / 1000; // 12 seconds total
@@ -343,39 +362,8 @@ export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProp
             >
               ¡Refrescar Mi Mundo Ahora!
             </button>
-            {/* QR Code area - link to welcome site and download */}
-            <div className="mt-4 flex items-center gap-3">
-              <button
-                onClick={async () => {
-                  setQrVisible((v) => !v);
-                }}
-                className="px-3 py-2 bg-white/6 text-white rounded-xl border border-white/10 text-sm font-semibold"
-                title="Mostrar u ocultar código QR"
-              >
-                {qrVisible ? 'Ocultar QR' : 'Mostrar QR'}
-              </button>
-
-              <button
-                onClick={() => {
-                  if (qrDataUrl) {
-                    const a = document.createElement('a');
-                    a.href = qrDataUrl;
-                    a.download = 'sebas-frost-qr.png';
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                  }
-                }}
-                className="px-3 py-2 bg-white/6 text-white rounded-xl border border-white/10 text-sm font-semibold"
-                disabled={!qrDataUrl}
-                title={qrDataUrl ? 'Descargar QR' : 'Genera el QR primero'}
-              >
-                Descargar QR
-              </button>
-            </div>
-
-            {qrVisible && (
-              <div className="mt-4 p-3 bg-white/5 rounded-2xl border border-white/10 flex items-start gap-4">
+            {/* QR Code area - always visible */}
+            <div className="mt-4 p-3 bg-white/5 rounded-2xl border border-white/10 flex items-start gap-4">
                 <div className="shrink-0 w-[220px] h-[220px] bg-white/5 rounded-md flex items-center justify-center">
                   {qrGenerating ? (
                     <div className="text-sm text-zinc-300">Generando...</div>

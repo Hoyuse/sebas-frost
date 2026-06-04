@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useEffect, useState } from 'react';
 import { 
   Target, 
   Eye, 
@@ -16,6 +17,34 @@ interface MisionVisionPageProps {
 }
 
 export default function MisionVisionPage({ onBackToStore }: MisionVisionPageProps) {
+  const [qrWhats, setQrWhats] = useState<string | null>(null);
+  const [qrMap, setQrMap] = useState<string | null>(null);
+  const [qrGenerating, setQrGenerating] = useState(false);
+
+  const WHATS_LINK = 'https://wa.me/573052668082';
+  const MAP_LINK = 'https://www.google.com/maps/search/5853+Cl.+19,+Cartagena,+Bol%C3%ADvar/@10.4150785,-75.5622286,13z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D';
+
+  useEffect(() => {
+    let mounted = true;
+    const gen = async () => {
+      setQrGenerating(true);
+      try {
+        const QR = await import('qrcode');
+        const w = await QR.toDataURL(WHATS_LINK, { width: 600, margin: 1 });
+        const m = await QR.toDataURL(MAP_LINK, { width: 600, margin: 1 });
+        if (mounted) {
+          setQrWhats(w);
+          setQrMap(m);
+        }
+      } catch (e) {
+        console.error('QR generation error', e);
+      } finally {
+        if (mounted) setQrGenerating(false);
+      }
+    };
+    gen();
+    return () => { mounted = false; };
+  }, []);
   return (
     <div className="w-full min-h-[calc(100vh-80px)] bg-gradient-to-b from-sky-50 via-zinc-50 to-white text-on-surface py-12 px-6 md:px-16 relative overflow-hidden select-none">
       
@@ -171,6 +200,72 @@ export default function MisionVisionPage({ onBackToStore }: MisionVisionPageProp
           >
             Explorar Nuestro Menú de Sabores
           </button>
+        </div>
+
+        {/* Persistent QR panel: WhatsApp + Map (always visible) */}
+        <div className="fixed right-6 bottom-6 z-50 p-4 bg-white rounded-2xl border shadow-lg w-[260px]">
+          <div className="text-xs font-bold mb-2">Contacto rápido</div>
+          <div className="flex flex-col gap-3 items-center">
+            <div className="text-xs text-zinc-500">WhatsApp</div>
+            <div className="w-36 h-36 bg-white p-1 rounded-md flex items-center justify-center">
+              {qrGenerating && !qrWhats ? (
+                <div className="text-xs text-zinc-400">Generando...</div>
+              ) : qrWhats ? (
+                <img src={qrWhats} alt="WhatsApp QR" className="w-32 h-32 object-contain" />
+              ) : (
+                <div className="text-xs text-zinc-400">No disponible</div>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  if (qrWhats) {
+                    const a = document.createElement('a');
+                    a.href = qrWhats;
+                    a.download = 'sebas-whatsapp-qr.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                  }
+                }}
+                className="px-2 py-1 bg-primary text-white rounded text-xs"
+              >
+                Descargar
+              </button>
+              <a href={WHATS_LINK} target="_blank" rel="noreferrer" className="px-2 py-1 bg-white/50 border rounded text-xs">Abrir</a>
+            </div>
+
+            <div className="w-full border-t border-zinc-100 my-2" />
+
+            <div className="text-xs text-zinc-500">Ubicación</div>
+            <div className="w-36 h-36 bg-white p-1 rounded-md flex items-center justify-center">
+              {qrGenerating && !qrMap ? (
+                <div className="text-xs text-zinc-400">Generando...</div>
+              ) : qrMap ? (
+                <img src={qrMap} alt="Map QR" className="w-32 h-32 object-contain" />
+              ) : (
+                <div className="text-xs text-zinc-400">No disponible</div>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  if (qrMap) {
+                    const a = document.createElement('a');
+                    a.href = qrMap;
+                    a.download = 'sebas-map-qr.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                  }
+                }}
+                className="px-2 py-1 bg-primary text-white rounded text-xs"
+              >
+                Descargar
+              </button>
+              <a href={MAP_LINK} target="_blank" rel="noreferrer" className="px-2 py-1 bg-white/50 border rounded text-xs">Abrir</a>
+            </div>
+          </div>
         </div>
 
       </div>
