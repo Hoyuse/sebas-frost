@@ -432,7 +432,6 @@ export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProp
                   </div>
                 </div>
               </div>
-            )}
           </div>
 
         </div>
