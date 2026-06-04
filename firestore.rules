@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net: Default-deny all paths by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reuseable global helpers for access control
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Helper functions for validating incoming document states
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUserProfile(data) {
+      return data.uid is string && data.uid.size() <= 128
+        && data.email is string && data.email.size() <= 256
+        && (data.displayName == null || (data.displayName is string && data.displayName.size() <= 128))
+        && data.cart is list && data.cart.size() <= 50
+        && data.updatedAt is timestamp;
+    }
+
+    // Rules for User Profile collection
+    match /users/{userId} {
+      // Direct retrieval of individual profiles is enabled for the owner
+      allow get: if isOwner(userId) && isValidId(userId);
+
+      // Listing or sweeping collections is strictly forbidden to prevent query scraping
+      allow list: if false;
+
+      // Creation conditions: must be the owner, matched email from token, timestamped correctly
+      allow create: if (
+        isOwner(userId) 
+        && isValidId(userId)
+        && isValidUserProfile(incoming()) 
+        && incoming().uid == userId 
+        && incoming().email == request.auth.token.email
+        && incoming().updatedAt == request.time
+      );
+
+      // Update conditions: must be the owner, cannot modify immutable credentials (uid, email)
+      allow update: if (
+        isOwner(userId)
+        && isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == existing().uid
+        && incoming().email == existing().email
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['cart', 'displayName', 'updatedAt'])
+      );
+
+      // Deletion is strictly locked or disabled for integrity
+      allow delete: if false;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Sebas Frost",
+  "description": "Refresca tu día con deliciosos granizados artesanales, consulta sabores y pide directamente por WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
