@@ -250,7 +250,7 @@ export default function App() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="md:hidden p-2 bg-zinc-100 hover:bg-zinc-200 rounded-xl transition-colors text-on-surface"
+              className="md:hidden p-2 bg-white border border-zinc-200 shadow-sm hover:bg-zinc-100 rounded-xl transition-colors text-on-surface"
               aria-label="Abrir menú"
             >
               <Menu className="w-5 h-5" />

@@ -178,14 +178,6 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
               </p>
             </div>
 
-            {/* Notification alert about configuration requirements */}
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-6 flex gap-2 items-start">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div className="text-[10px] text-amber-700 leading-normal">
-                El inicio de sesión por <strong>Google</strong> está activo por defecto. Si usas Correo, asegúrate de tener activo <em>Email/Password</em> en tu consola Firebase de Google Cloud.
-              </div>
-            </div>
-
             {/* Success state */}
             {success ? (
               <motion.div 
