@@ -546,7 +546,9 @@ export default function App() {
                 Sebas <span className="text-primary font-black">Frost</span>
               </div>
               <p className="text-xs text-on-surface-variant">
-                © 2026 Sebas Frost. Refresca tu mundo. Todos los derechos reservados.
+                <a href="https://sebas-frost.vercel.app/" className="hover:underline">Sebas Frost</a> by <a href="https://github.com/Hoyuse" className="hover:underline">Sebastian Morelo</a> is marked <a href="https://creativecommons.org/publicdomain/zero/1.0/" className="hover:underline">CC0 1.0</a>
+                <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="cc" style={{ maxWidth: '1em', maxHeight: '1em', marginLeft: '.2em' }} />
+                <img src="https://mirrors.creativecommons.org/presskit/icons/zero.svg" alt="zero" style={{ maxWidth: '1em', maxHeight: '1em', marginLeft: '.2em' }} />
               </p>
             </div>
             
