@@ -203,7 +203,7 @@ export default function MisionVisionPage({ onBackToStore }: MisionVisionPageProp
         </div>
 
         {/* Persistent QR panel: WhatsApp + Map (always visible) */}
-        <div className="hidden md:flex fixed right-6 bottom-6 z-50 p-4 bg-white rounded-2xl border shadow-lg w-[260px] flex-col">
+        <div className="fixed right-6 bottom-6 z-50 p-4 bg-white rounded-2xl border shadow-lg w-[260px]">
           <div className="text-xs font-bold mb-2">Contacto rápido</div>
           <div className="flex flex-col gap-3 items-center">
             <div className="text-xs text-zinc-500">WhatsApp</div>
