@@ -431,8 +431,7 @@ export default function WelcomeVideoPage({ onBackToStore }: WelcomeVideoPageProp
                     <img src="https://mirrors.creativecommons.org/presskit/icons/zero.svg" alt="zero" style={{ maxWidth: '1em', maxHeight: '1em', marginLeft: '.2em' }} />
                   </div>
                 </div>
-              </div>
-            )}
+                </div>
           </div>
 
         </div>
