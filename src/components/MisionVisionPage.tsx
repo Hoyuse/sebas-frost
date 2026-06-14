@@ -22,7 +22,7 @@ export default function MisionVisionPage({ onBackToStore }: MisionVisionPageProp
   const [qrGenerating, setQrGenerating] = useState(false);
 
   const WHATS_LINK = 'https://wa.me/573052668082';
-  const MAP_LINK = 'https://www.google.com/maps/search/5853+Cl.+19,+Cartagena,+Bol%C3%ADvar/@10.4150785,-75.5622286,13z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D';
+  const MAP_LINK = 'https://www.google.com/maps?q=10.378189086914062,-75.4897232055664&z=17&hl=es';
 
   useEffect(() => {
     let mounted = true;

@@ -35,6 +35,9 @@ import WelcomeVideoPage from './components/WelcomeVideoPage';
 import MisionVisionPage from './components/MisionVisionPage';
 
 export default function App() {
+  const STORE_MAP_LINK = 'https://www.google.com/maps?q=10.378189086914062,-75.4897232055664&z=17&hl=es';
+  const STORE_COORDINATES = '10.378189, -75.489723';
+
   // --- STATE ---
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -218,7 +221,7 @@ export default function App() {
             </span>
           </div>
 
-          {/* Desktop Navigation Links (Removed Location) */}
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex gap-8 items-center font-semibold text-sm">
             <button 
               onClick={() => setCurrentView('store')} 
@@ -238,6 +241,10 @@ export default function App() {
             </a>
             <a href="#horarios" onClick={() => setCurrentView('store')} className="text-on-surface-variant hover:text-primary transition-colors">
               Horarios
+            </a>
+            <a href="#ubicacion" onClick={() => setCurrentView('store')} className="text-on-surface-variant hover:text-primary transition-colors inline-flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" />
+              Ubicación
             </a>
             <button 
               onClick={() => { setCurrentView('mision-vision'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
@@ -370,6 +377,12 @@ export default function App() {
                   className="text-left w-full px-4 py-3 rounded-2xl font-semibold text-on-surface hover:bg-zinc-100 transition-colors"
                 >
                   Horarios
+                </button>
+                <button
+                  onClick={() => { setCurrentView('store'); setIsMobileMenuOpen(false); setTimeout(() => document.getElementById('ubicacion')?.scrollIntoView({ behavior: 'smooth' }), 50); }}
+                  className="text-left w-full px-4 py-3 rounded-2xl font-semibold text-on-surface hover:bg-zinc-100 transition-colors"
+                >
+                  Ubicación
                 </button>
                 <button
                   onClick={() => { setCurrentView('mision-vision'); setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
@@ -537,10 +550,10 @@ export default function App() {
         {/* 4. Ice Shimmer Divider Bar */}
         <div className="w-full h-2.5 shimmer-bar"></div>
 
-        {/* 5. Bento Style Information Cards (Horarios, Sobre Nosotros - Removed Locations) */}
+        {/* 5. Bento Style Information Cards */}
         <section className="py-24 bg-zinc-100/55 border-b border-zinc-200/50">
           <div className="max-w-4xl mx-auto px-6 md:px-16" id="bento-info">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
 
               {/* Horarios Card (Dynamic status checking) */}
               <div 
@@ -572,6 +585,35 @@ export default function App() {
                 <div className="mt-8 pt-4 border-t border-white/10 flex flex-col gap-1">
                   <span className="font-black text-sm">Lunes a Domingo</span>
                   <span className="text-xs text-primary-container/90">10:00 AM - 9:00 PM sin interrupciones</span>
+                </div>
+              </div>
+
+              {/* Ubicacion Card */}
+              <div
+                id="ubicacion"
+                className="bg-white rounded-3xl p-8 shadow-sm border border-zinc-200/40 flex flex-col justify-between hover:shadow-md transition-shadow duration-300 min-h-[300px]"
+              >
+                <div>
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">
+                    <MapPin className="w-6 h-6 stroke-[2.3]" />
+                  </div>
+                  <h4 className="font-sans font-black text-xl text-on-surface mb-2">Ubicación</h4>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">
+                    Encuéntranos en Cartagena. Esta es la ubicación exacta que abrimos en Google Maps para que llegues sin vueltas.
+                  </p>
+                </div>
+                <div className="mt-8 pt-4 border-t border-zinc-200/70 flex flex-col gap-3">
+                  <span className="font-black text-sm text-on-surface">Coordenadas</span>
+                  <span className="text-xs text-on-surface-variant">{STORE_COORDINATES}</span>
+                  <a
+                    href={STORE_MAP_LINK}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary/95 text-white rounded-2xl text-xs font-extrabold shadow-sm transition-all"
+                  >
+                    Abrir en Google Maps
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
                 </div>
               </div>
 
@@ -640,6 +682,9 @@ export default function App() {
               </span>
               <a href="#horarios" onClick={() => setCurrentView('store')} className="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors">
                 Horario
+              </a>
+              <a href="#ubicacion" onClick={() => setCurrentView('store')} className="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors">
+                Ubicación
               </a>
               <span className="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onClick={() => setIsCartOpen(true)}>
                 Ver Pedido
